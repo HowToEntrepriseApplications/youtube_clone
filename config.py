@@ -14,5 +14,7 @@ class Config:
     @environ.config
     class MongoConfig:
         uri = environ.var('mongodb://localhost:27017')
+        username = environ.var('mongo')
+        password = environ.var('mongo')
         database = environ.var('youtube_clone')
     mongo = environ.group(MongoConfig)
