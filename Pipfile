@@ -7,6 +7,8 @@ verify_ssl = true
 
 [packages]
 aiohttp = '==3.6.2'
+environ-config = "==20.1.0"
+aioboto3 = "==8.0.3"
 
 [requires]
 python_version = "3.8"

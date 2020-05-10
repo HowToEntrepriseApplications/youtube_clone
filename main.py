@@ -1,4 +1,14 @@
+import logging
+
+import aioboto3
+import botocore
+import environ
 from aiohttp import web
+
+from config import Config
+
+
+logger = logging.getLogger(__name__)
 
 
 async def get_videos(request: web.Request):
@@ -36,8 +46,33 @@ async def get_video(request: web.Request):
     return web.Response(body=html, content_type='text/html')
 
 
+async def s3_ctx(app):
+    s3_config: Config.S3Config = app['config'].s3
+    s3 = aioboto3.client(
+        "s3",
+        endpoint_url=s3_config.endpoint_url,
+        aws_access_key_id=s3_config.aws_access_key_id,
+        aws_secret_access_key=s3_config.aws_secret_access_key
+    )
+    async with s3 as s3:
+        try:
+            await s3.head_bucket(Bucket=s3_config.bucket)
+        except botocore.exceptions.ClientError:
+            logger.info(f'Bucket {s3_config.bucket} created')
+            await s3.create_bucket(Bucket=s3_config.bucket)
+
+        app['s3'] = s3
+        yield
+
+
 def main():
+    print(environ.generate_help(Config, display_defaults=True))
+    config = environ.to_config(Config)
+
     app = web.Application()
+    app['config'] = config
+
+    app.cleanup_ctx.extend((s3_ctx, ))
     app.add_routes([
         web.get('', get_videos),
         web.get('/1', get_video)
