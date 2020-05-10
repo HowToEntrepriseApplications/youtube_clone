@@ -4,6 +4,7 @@ import aioboto3
 import botocore
 import environ
 from aiohttp import web
+from motor import motor_asyncio
 
 from config import Config
 
@@ -48,6 +49,7 @@ async def get_video(request: web.Request):
 
 async def s3_ctx(app):
     s3_config: Config.S3Config = app['config'].s3
+
     s3 = aioboto3.client(
         "s3",
         endpoint_url=s3_config.endpoint_url,
@@ -62,7 +64,17 @@ async def s3_ctx(app):
             await s3.create_bucket(Bucket=s3_config.bucket)
 
         app['s3'] = s3
+
         yield
+
+
+async def mongo_ctx(app):
+    mongo_config: Config.mongo = app['config'].mongo
+
+    client = motor_asyncio.AsyncIOMotorClient(mongo_config.uri)
+    app['db'] = client[mongo_config.database]
+
+    yield
 
 
 def main():

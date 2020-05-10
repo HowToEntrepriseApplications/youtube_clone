@@ -9,6 +9,7 @@ verify_ssl = true
 aiohttp = '==3.6.2'
 environ-config = "==20.1.0"
 aioboto3 = "==8.0.3"
+motor = "==2.1.0"
 
 [requires]
-python_version = "3.8"
+python_version = "3.8.2"

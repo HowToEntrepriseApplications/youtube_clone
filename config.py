@@ -10,3 +10,9 @@ class Config:
         aws_secret_access_key = environ.var('minio_secret_key')
         bucket = environ.var('youtube-clone')
     s3 = environ.group(S3Config)
+
+    @environ.config
+    class MongoConfig:
+        uri = environ.var('mongodb://localhost:27017')
+        database = environ.var('youtube_clone')
+    mongo = environ.group(MongoConfig)
