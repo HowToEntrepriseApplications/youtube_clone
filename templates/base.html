@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %} {% endblock %}</title>
+    </head>
+    <body>
+    <header>
+        <nav>
+            {% block nav %}
+                <a href="{{ url('index') }}">youtube clone</a>
+                {% if authorized() %}
+                    <a href="{{ url('logout') }}">logout</a>
+                {% else %}
+                    <a href="{{ url('auth') }}">sign in</a>
+                {% endif %}
+            {% endblock %}
+        </nav>
+    </header>
+    <main>
+        {% block main %} {% endblock %}
+    </main>
+    <footer>
+        youtube clone
+    </footer>
+    </body>
+</html>
