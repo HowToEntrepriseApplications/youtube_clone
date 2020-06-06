@@ -2,7 +2,7 @@ import environ
 from yarl import URL
 
 
-@environ.config(prefix='YC')
+@environ.config(prefix='')
 class Config:
     @environ.config
     class S3Config:

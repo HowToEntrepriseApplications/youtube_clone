@@ -38,13 +38,16 @@ def get_app():
 
     # auth routes
     app.router.add_route('*', '/auth', views.auth, name='auth')
-    app.router.add_route('*', '/oauth2/callback', views.callback, name='callback')
+    app.router.add_route('*', '/oauth2/callback', views.auth_callback, name='callback')
     app.router.add_route('*', '/logout', views.logout, name='logout')
 
     # user routes
 
-    # video routes
-    app.router.add_post('/videos', views.post_video, name='post_video')
+    # upload routes
+    app.router.add_get('/upload', views.upload, name='upload')
+    app.router.add_get('/upload_callback/{id}', views.upload_callback, name='upload_callback')
+
+    # videos
     app.router.add_get('/video/{id}', views.get_video, name='video')
 
     return app

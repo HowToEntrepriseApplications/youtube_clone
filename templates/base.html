@@ -10,6 +10,7 @@
             {% block nav %}
                 <a href="{{ url('index') }}">youtube clone</a>
                 {% if authorized() %}
+                    <a href="{{ url('upload') }}">upload video</a>
                     <a href="{{ url('logout') }}">logout</a>
                 {% else %}
                     <a href="{{ url('auth') }}">sign in</a>

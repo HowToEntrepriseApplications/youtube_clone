@@ -1,5 +1,3 @@
-import uuid
-
 import aiohttp_jinja2
 from aiohttp import web
 from aiohttp.web_exceptions import HTTPFound
@@ -18,7 +16,8 @@ async def index(request: web.Request):
 
     videos = [
         {'id': str(video['_id']), 'name': video['name']}
-        async for video in app['db'][VIDEO_COLLECTION].find()
+        async for video
+        in app['db'][VIDEO_COLLECTION].find({'uploaded': True})
     ]
 
     return {'videos': videos}
@@ -36,7 +35,7 @@ async def auth(request: web.Request):
     return HTTPFound(auth_url)
 
 
-async def callback(request: web.Request):
+async def auth_callback(request: web.Request):
     app = request.app
     keycloak_connection: KeycloakOpenidConnect = app['keycloak_connect']
     site: Config.SiteConfig = app['config'].site
@@ -66,27 +65,42 @@ async def get_video(request: web.Request):
     app = request.app
 
     video_id = request.match_info['id']
-    video = await app['db'][VIDEO_COLLECTION].find_one({'_id': ObjectId(video_id)})
+    video = await app['db'][VIDEO_COLLECTION].find_one({'_id': ObjectId(video_id), 'uploaded': True})
     url = await app['s3'].generate_presigned_url(
         'get_object',
-        Params={'Bucket': app['config'].s3.bucket, 'Key': video['key']},
+        Params={'Bucket': app['config'].s3.bucket, 'Key': video_id},
     )
     return {'video': video, 'video_content_url': url}
 
 
-async def post_video(request: web.Request):
+@aiohttp_jinja2.template('upload.html')
+async def upload(request: web.Request):
     await check_authorized(request)
 
     app = request.app
-    data = await request.post()
-    video = data['video']
+    site_config: Config.SiteConfig = app['config'].site
 
-    key = f'{uuid.uuid4()}'
-    await app['s3'].upload_fileobj(
-        Fileobj=video.file,
-        Bucket=app['config'].s3.bucket,
-        Key=key,
+    document = await app['db'][VIDEO_COLLECTION].insert_one({'name': 'undefined'})
+    _id = str(document.inserted_id)
+
+    site_url = site_config.absolute_url
+    success_action_redirect = str(site_url.join(app.router['upload_callback'].url_for(id=_id)))
+
+    presigned = await app['s3'].generate_presigned_post(
+        app['config'].s3.bucket,
+        _id,
+        Fields={'success_action_redirect': success_action_redirect},
+        Conditions=[{'success_action_redirect': success_action_redirect}],
     )
-    result = await app['db'][VIDEO_COLLECTION].insert_one({'name': video.filename, 'key': key})
 
-    return web.HTTPFound(app.router['video'].url_for(id=str(result.inserted_id)))
+    return {'presigned': presigned}
+
+
+async def upload_callback(request: web.Request):
+    app = request.app
+
+    video_id = request.match_info['id']
+
+    await app['db'][VIDEO_COLLECTION].update_one({'_id': ObjectId(video_id)}, {'$set': {'uploaded': True}})
+
+    return HTTPFound(app.router['video'].url_for(id=video_id))
