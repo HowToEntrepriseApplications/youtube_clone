@@ -3,19 +3,18 @@ from pathlib import Path
 import aiohttp_jinja2
 import environ
 import jinja2
-import uvloop
 from aiohttp import web
 
 import views
-from common.cleanup_ctx import mongo_ctx, s3_ctx, session_ctx, csrf_ctx, keycloak_ctx
-from common.jinja2 import csrf_token, authorized
+from cleanup_ctx import mongo_ctx, s3_ctx, session_ctx, csrf_ctx, keycloak_ctx
+from jinja2_contextfunction import csrf_token, authorized
 from config import Config
 from constants import CSRF_FORM_FIELD_NAME
 
 BASE_DIR = Path(__file__).parent
 
 
-def get_app():
+def get_app(extra_argv=None):
     print(environ.generate_help(Config, display_defaults=True))
     config = environ.to_config(Config)
 
@@ -51,9 +50,3 @@ def get_app():
     app.router.add_get('/video/{id}', views.get_video, name='video')
 
     return app
-
-
-if __name__ == '__main__':
-    uvloop.install()
-    app = get_app()
-    web.run_app(app, host=app['config'].site.host, port=app['config'].site.port)

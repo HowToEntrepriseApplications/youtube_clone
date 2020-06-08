@@ -712,7 +712,7 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "5106d698-2ea4-457b-a99e-8ba1952ae674",
       "redirectUris": [
-        "http://0.0.0.0:8000/oauth2/callback"
+        "http://youtube-clone.localtest.me/oauth2/callback"
       ],
       "webOrigins": [],
       "notBefore": 0,

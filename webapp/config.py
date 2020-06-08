@@ -20,7 +20,7 @@ class Config:
 
     @environ.config
     class RedisConfig:
-        uri = environ.var('redis://localhost:6380/1')
+        uri = environ.var('redis://localhost:6379/1')
     redis = environ.group(RedisConfig)
 
     @environ.config
@@ -28,16 +28,18 @@ class Config:
         scheme = environ.var('http')
         host = environ.var('0.0.0.0')
         port = environ.var('8000')
-        name = environ.var('Youtube clone')
 
         @property
         def absolute_url(self):
-            return URL.build(scheme=self.scheme, host=self.host, port=self.port)
+            absolute_url = URL.build(scheme=self.scheme, host=self.host, port=self.port)
+            if absolute_url.is_default_port():
+                absolute_url = absolute_url.with_port(None)
+            return absolute_url
     site = environ.group(SiteConfig)
 
     @environ.config
     class Keycloak:
-        server_url = environ.var('http://localhost:8082')
+        server_url = environ.var('http://localhost:8080')
         realm_name = environ.var('youtube_clone')
         client_id = environ.var('webapp')
         client_secret = environ.var('5106d698-2ea4-457b-a99e-8ba1952ae674')

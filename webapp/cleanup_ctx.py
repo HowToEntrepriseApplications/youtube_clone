@@ -6,15 +6,16 @@ import aiohttp_session
 import aioredis
 import botocore
 from aiohttp import ClientConnectionError
+from aiohttp import web
 from aiohttp_security import AbstractAuthorizationPolicy
 from aiohttp_security import SessionIdentityPolicy
+from aiohttp_security import authorized_userid
 from aiohttp_security import setup as setup_security
 from aiohttp_session import redis_storage
 from keycloak.aio import KeycloakOpenidConnect
 from keycloak.aio import KeycloakRealm
 from motor import motor_asyncio
 
-from common.middlewares import authorized_middleware
 from config import Config
 from constants import CSRF_FORM_FIELD_NAME
 
@@ -89,6 +90,15 @@ async def csrf_ctx(app):
     app.middlewares.append(aiohttp_csrf.csrf_middleware)
 
     yield
+
+
+@web.middleware
+async def authorized_middleware(request, handler):
+    authorized = await authorized_userid(request)
+
+    request['authorized'] = authorized
+
+    return await handler(request)
 
 
 async def keycloak_ctx(app):

@@ -21,4 +21,8 @@ aiohttp-csrf = "==0.0.2"
 python-keycloak-client = "==0.2.3"
 
 [requires]
-python_version = "3.8.3"
+python_full_version = "3.8.3"
+
+[scripts]
+runserver = "python -m aiohttp.web --entry_func app:get_app --hostname 0.0.0.0 --port 8000"
+reunserver_dev = "python -m aiohttp_devtools runserver --app-factory get_app --debug-toolbar"
