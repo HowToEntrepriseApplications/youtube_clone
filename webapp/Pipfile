@@ -19,6 +19,7 @@ aiohttp-security = "==0.4.0"
 uvloop = "==0.14.0"
 aiohttp-csrf = "==0.0.2"
 python-keycloak-client = "==0.2.3"
+aiojobs = "==0.2.2"
 
 [requires]
 python_full_version = "3.8.3"

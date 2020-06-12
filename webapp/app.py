@@ -1,6 +1,8 @@
 from pathlib import Path
 
 import aiohttp_jinja2
+import aiojobs
+import aiojobs.aiohttp
 import environ
 import jinja2
 from aiohttp import web
@@ -20,6 +22,7 @@ def get_app(extra_argv=None):
 
     app = web.Application()
     app['config'] = config
+    aiojobs.aiohttp.setup(app, limit=1)
 
     jinja2_env = aiohttp_jinja2.setup(
         app,

@@ -6,6 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIPENV_VENV_IN_PROJECT=1
 
+RUN apt update && apt install file -y
 
 RUN pip install --upgrade pip==20.1.1 && pip install pipenv==2020.6.2
 

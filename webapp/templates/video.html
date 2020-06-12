@@ -2,6 +2,6 @@
 {% block main %}
     <h2>{{ video['name'] }}</h2>
     <video controls>
-        <source src="{{ video_content_url }}" type="video/mp4">
+        <source src="{{ video_content_url }}" type="{{ mime_type }}">
     </video>
 {% endblock %}

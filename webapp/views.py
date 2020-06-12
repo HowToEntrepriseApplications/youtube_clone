@@ -1,4 +1,9 @@
+import asyncio
+from tempfile import NamedTemporaryFile
+
 import aiohttp_jinja2
+import aiojobs
+import aiojobs.aiohttp
 from aiohttp import web
 from aiohttp.web_exceptions import HTTPFound
 from aiohttp_security import check_authorized
@@ -17,7 +22,7 @@ async def index(request: web.Request):
     videos = [
         {'id': str(video['_id']), 'name': video['name']}
         async for video
-        in app['db'][VIDEO_COLLECTION].find({'uploaded': True})
+        in app['db'][VIDEO_COLLECTION].find({'uploaded': True, 'mime_detected': True})
     ]
 
     return {'videos': videos}
@@ -65,12 +70,14 @@ async def get_video(request: web.Request):
     app = request.app
 
     video_id = request.match_info['id']
-    video = await app['db'][VIDEO_COLLECTION].find_one({'_id': ObjectId(video_id), 'uploaded': True})
+    video = await app['db'][VIDEO_COLLECTION].find_one(
+        {'_id': ObjectId(video_id), 'uploaded': True, 'mime_detected': True}
+    )
     url = await app['s3'].generate_presigned_url(
         'get_object',
         Params={'Bucket': app['config'].s3.bucket, 'Key': video_id},
     )
-    return {'video': video, 'video_content_url': url}
+    return {'video': video, 'mime_type': video['mime_type'], 'video_content_url': url}
 
 
 @aiohttp_jinja2.template('upload.html')
@@ -79,6 +86,7 @@ async def upload(request: web.Request):
 
     app = request.app
     site_config: Config.SiteConfig = app['config'].site
+    s3_config: Config.S3Config = app['config'].s3
 
     document = await app['db'][VIDEO_COLLECTION].insert_one({'name': 'undefined'})
     _id = str(document.inserted_id)
@@ -87,7 +95,7 @@ async def upload(request: web.Request):
     success_action_redirect = str(site_url.join(app.router['upload_callback'].url_for(id=_id)))
 
     presigned = await app['s3'].generate_presigned_post(
-        app['config'].s3.bucket,
+        s3_config.bucket,
         _id,
         Fields={'success_action_redirect': success_action_redirect},
         Conditions=[{'success_action_redirect': success_action_redirect}],
@@ -102,5 +110,28 @@ async def upload_callback(request: web.Request):
     video_id = request.match_info['id']
 
     await app['db'][VIDEO_COLLECTION].update_one({'_id': ObjectId(video_id)}, {'$set': {'uploaded': True}})
+    scheduler = aiojobs.aiohttp.get_scheduler_from_app(app)
+    await scheduler.spawn(process_file(app, video_id))
 
-    return HTTPFound(app.router['video'].url_for(id=video_id))
+    return HTTPFound(app.router['index'].url_for())
+
+
+async def process_file(app, video_id):
+    s3_config: Config.S3Config = app['config'].s3
+
+    with NamedTemporaryFile() as f:
+        await app['s3'].download_fileobj(s3_config.bucket, video_id, f)
+        f.flush()
+
+        proc = await asyncio.create_subprocess_shell(
+            f'file --mime-type -b {f.name}',
+            stdout=asyncio.subprocess.PIPE
+        )
+        await proc.wait()
+        data = await proc.stdout.readline()
+        mime_type = data.decode('ascii').rstrip()
+
+    await app['db'][VIDEO_COLLECTION].update_one(
+        {'_id': ObjectId(video_id)},
+        {'$set': {'uploaded': True, 'mime_detected': True, 'mime_type': mime_type}}
+    )
