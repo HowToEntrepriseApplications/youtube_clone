@@ -1,16 +1,20 @@
 version: "3.8"
 services:
   nginx:
-    build: nginx
+    build: nginx/dev
     container_name: nginx
     restart: always
     ports:
       - 80:80
 
   webapp:
-    build: webapp
+    build:
+      context: webapp
+      dockerfile: docker/Dockerfile-dev
     container_name: webapp
     restart: always
+    volumes:
+      - "./webapp:/webapp"
     environment:
       - S3_ENDPOINT_URL=http://minio.localtest.me
       - S3_AWS_ACCESS_KEY_ID=minio_access_key
@@ -69,7 +73,7 @@ services:
       - 8025:8025
 
   keycloack:
-    build: keycloak
+    build: keycloak/dev
     container_name: keycloak
     restart: always
     environment:

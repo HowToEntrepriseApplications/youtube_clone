@@ -1,11 +1,12 @@
 from pathlib import Path
 
+import aiohttp_debugtoolbar
 import aiohttp_jinja2
 import aiojobs
 import aiojobs.aiohttp
 import environ
 import jinja2
-from aiohttp import web
+from aiohttp.web import Application
 
 import views
 from cleanup_ctx import mongo_ctx, s3_ctx, session_ctx, csrf_ctx, keycloak_ctx
@@ -16,11 +17,10 @@ from constants import CSRF_FORM_FIELD_NAME
 BASE_DIR = Path(__file__).parent
 
 
-def get_app(extra_argv=None):
-    print(environ.generate_help(Config, display_defaults=True))
+def get_app(extra_argv=None) -> Application:
     config = environ.to_config(Config)
 
-    app = web.Application()
+    app = Application()
     app['config'] = config
     aiojobs.aiohttp.setup(app, limit=1)
 
@@ -52,4 +52,10 @@ def get_app(extra_argv=None):
     # videos
     app.router.add_get('/video/{id}', views.get_video, name='video')
 
+    return app
+
+
+def get_dev_app(extra_argv=None) -> Application:
+    app = get_app(extra_argv)
+    aiohttp_debugtoolbar.setup(app, hosts=['192.168.0.0/16'])
     return app
