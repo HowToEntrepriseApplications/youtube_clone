@@ -2,7 +2,7 @@ version: "3.8"
 services:
   nginx:
     build: nginx/dev
-    container_name: nginx
+    container_name: nginx.boringart
     restart: always
     ports:
       - 80:80
@@ -11,7 +11,7 @@ services:
     build:
       context: webapp
       dockerfile: docker/Dockerfile-dev
-    container_name: webapp
+    container_name: webapp.boringart
     restart: always
     volumes:
       - "./webapp:/webapp"
@@ -40,7 +40,7 @@ services:
 
   minio:
     image: minio/minio
-    container_name: minio
+    container_name: minio.boringart
     restart: always
     environment:
       MINIO_ACCESS_KEY: minio_access_key
@@ -49,24 +49,24 @@ services:
 
   mongo:
     image: mongo
-    container_name: mongo
+    container_name: mongo.boringart
     restart: always
 
   mongo-express:
     image: mongo-express
-    container_name: mongo-express
+    container_name: mongo-express.boringart
     restart: always
     ports:
       - 8081:8081
 
   redis:
     image: redis
-    container_name: redis
+    container_name: redis.boringart
     restart: always
 
   mailhog:
     image: mailhog/mailhog
-    container_name: mailhog
+    container_name: mailhog.boringart
     restart: always
     ports:
       - 1025:1025
@@ -74,7 +74,7 @@ services:
 
   keycloack:
     build: keycloak/dev
-    container_name: keycloak
+    container_name: keycloak.boringart
     restart: always
     environment:
       KEYCLOAK_USER: admin
