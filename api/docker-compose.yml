@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  minio:
+    image: minio/minio
+    container_name: minio.api.boringart
+    restart: always
+    environment:
+      MINIO_ACCESS_KEY: minio_access_key
+      MINIO_SECRET_KEY: minio_secret_key
+    ports:
+      - "9000:9000"
+    command: minio server /data
+
+  mongo:
+    image: mongo
+    container_name: mongo.api.boringart
+    restart: always
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express.api.boringart
+    restart: always
+    ports:
+      - 8081:8081
