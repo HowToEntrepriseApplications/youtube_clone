@@ -19,7 +19,7 @@ class Config:
     mongo = environ.group(MongoConfig)
 
     @environ.config
-    class SiteConfig:
+    class APIConfig:
         scheme = environ.var('http')
         host = environ.var('0.0.0.0')
         port = environ.var('8000')
@@ -30,4 +30,9 @@ class Config:
             if absolute_url.is_default_port():
                 absolute_url = absolute_url.with_port(None)
             return absolute_url
+    api = environ.group(APIConfig)
+
+    @environ.config
+    class SiteConfig:
+        index = environ.var('http://localhost:3000')
     site = environ.group(SiteConfig)

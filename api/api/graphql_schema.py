@@ -8,13 +8,15 @@ from constants import VIDEO_COLLECTION
 class Video(ObjectType):
     id = ID()
     title = String()
+    mime_type = String()
     content_url = String()
 
-    async def resolve_content_url(self, args, context, info):
+    @staticmethod
+    async def resolve_content_url(root, info):
         app = info.context['request'].app
         return await app['s3'].generate_presigned_url(
             'get_object',
-            Params={'Bucket': app['config'].s3.bucket, 'Key': self.id},
+            Params={'Bucket': app['config'].s3.bucket, 'Key': root.id},
         )
 
 
@@ -37,7 +39,7 @@ class Query(ObjectType):
         video = await app['db'][VIDEO_COLLECTION].find_one(
             {'_id': ObjectId(id), 'uploaded': True, 'mime_detected': True}
         )
-        return Video(id=video['_id'], title=video['title'])
+        return Video(id=str(video['_id']), title=video['title'], mime_type=video['mime_type'])
 
 
 class Mutations(ObjectType):
@@ -48,13 +50,13 @@ class Mutations(ObjectType):
         # TODO: authorize required
 
         app = info.context['request'].app
-        site_config: Config.SiteConfig = app['config'].site
+        api_config: Config.APIConfig = app['config'].api
         s3_config: Config.S3Config = app['config'].s3
 
-        document = await app['db'][VIDEO_COLLECTION].insert_one({'name': name})
+        document = await app['db'][VIDEO_COLLECTION].insert_one({'title': name})
         _id = str(document.inserted_id)
 
-        site_url = site_config.absolute_url
+        site_url = api_config.absolute_url
         success_action_redirect = str(site_url.join(app.router['upload_callback'].url_for(id=_id)))
 
         presigned = await app['s3'].generate_presigned_post(

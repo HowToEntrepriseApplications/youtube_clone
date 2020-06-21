@@ -32,8 +32,8 @@ async def s3_ctx(app):
         try:
             await s3.head_bucket(Bucket=s3_config.bucket)
         except botocore.exceptions.ClientError:
-            logger.info(f'Bucket {s3_config.bucket} created')
             await s3.create_bucket(Bucket=s3_config.bucket)
+            logger.info(f'Bucket {s3_config.bucket} created')
 
         app['s3'] = s3
 

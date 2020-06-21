@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 
 import aiojobs
 from aiohttp import web
-from aiohttp.web_response import Response
+from aiohttp.web_exceptions import HTTPFound
 from bson import ObjectId
 
 from config import Config
@@ -19,7 +19,7 @@ async def upload_callback(request: web.Request):
     scheduler = aiojobs.aiohttp.get_scheduler_from_app(app)
     await scheduler.spawn(process_file(app, video_id))
 
-    return Response()
+    return HTTPFound(app['config'].site.index)
 
 
 async def process_file(app, video_id):

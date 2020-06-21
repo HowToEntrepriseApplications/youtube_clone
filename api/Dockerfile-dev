@@ -9,8 +9,8 @@ RUN apt update && apt install file -y
 
 RUN pip install --upgrade pip==20.1.1 && pip install pipenv==2020.6.2
 
-WORKDIR /webapp
-COPY Pipfile.lock /webapp/
+WORKDIR /api
+COPY Pipfile.lock /api/
 RUN pipenv sync --dev
 
 COPY . /webapp/

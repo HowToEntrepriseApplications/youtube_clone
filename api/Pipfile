@@ -17,9 +17,9 @@ aiohttp-security = "==0.4.0"
 uvloop = "==0.14.0"
 python-keycloak-client = "==0.2.3"
 aiojobs = "==0.2.2"
-aiohttp-graphql = "*"
-graphene = "*"
-aiohttp-cors = "*"
+aiohttp-graphql = "==1.1.0"
+graphene = "==2.1.8"
+aiohttp-cors = "==0.7.0"
 
 [requires]
 python_full_version = "3.8.3"

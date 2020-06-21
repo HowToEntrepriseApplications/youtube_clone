@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import aiohttp_cors
 import aiojobs
 import aiojobs.aiohttp
 import environ
@@ -23,7 +24,17 @@ def get_app(extra_argv=None) -> Application:
     aiojobs.aiohttp.setup(app, limit=1)
 
     app.cleanup_ctx.extend((s3_ctx, mongo_ctx))
-    GraphQLView.attach(app, schema=schema, graphiql=True, executor=AsyncioExecutor())
+
+    cors = aiohttp_cors.setup(app)
+    resource = cors.add(app.router.add_resource("/graphql"), {
+        "*": aiohttp_cors.ResourceOptions(
+            expose_headers="*",
+            allow_headers="*",
+            allow_credentials=True,
+            allow_methods=["POST", "PUT", "GET"]),
+    })
+    GraphQLView(schema=schema, graphiql=True, executor=AsyncioExecutor())
+    resource.add_route("*", GraphQLView(schema=schema, graphiql=True, executor=AsyncioExecutor()))
     app.router.add_get('/upload_callback/{id}', upload_callback, name='upload_callback')
 
     return app
