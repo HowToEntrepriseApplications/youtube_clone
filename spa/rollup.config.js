@@ -20,7 +20,11 @@ export default {
 		plugins: [
 			replace({
 				'process.browser': true,
-				'process.env.NODE_ENV': JSON.stringify(mode)
+				'process.env.NODE_ENV': JSON.stringify(mode),
+				'process.env.API_ENDPOINT' : JSON.stringify(process.env.API_ENDPOINT || 'http://127.0.0.1:8000'),
+				'process.env.KEYCLOAK_URL': JSON.stringify(process.env.KEYCLOAK_URL || 'http://127.0.0.1:8080'),
+				'process.env.KEYCLOAK_REALM': JSON.stringify(process.env.KEYCLOAK_REALM || 'boring art'),
+				'process.env.KEYCLOAK_CLIENT_ID': JSON.stringify(process.env.KEYCLOAK_CLIENT_ID || 'spa'),
 			}),
 			svelte({
 				dev,
@@ -65,7 +69,11 @@ export default {
 		plugins: [
 			replace({
 				'process.browser': false,
-				'process.env.NODE_ENV': JSON.stringify(mode)
+				'process.env.NODE_ENV': JSON.stringify(mode),
+				'process.env.API_ENDPOINT' : JSON.stringify(process.env.API_ENDPOINT || 'http://127.0.0.1:8000'),
+				'process.env.KEYCLOAK_URL': JSON.stringify(process.env.KEYCLOAK_URL || 'http://127.0.0.1:8080'),
+				'process.env.KEYCLOAK_REALM': JSON.stringify(process.env.KEYCLOAK_REALM || 'boring art'),
+				'process.env.KEYCLOAK_CLIENT_ID': JSON.stringify(process.env.KEYCLOAK_CLIENT_ID || 'spa'),
 			}),
 			svelte({
 				generate: 'ssr',

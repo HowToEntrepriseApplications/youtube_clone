@@ -1,8 +1,0 @@
-{
-  "realm": "youtube_clone",
-  "auth-server-url": "http://keycloak.localtest.me/auth/",
-  "ssl-required": "none",
-  "resource": "spa",
-  "public-client": true,
-  "confidential-port": 0
-}

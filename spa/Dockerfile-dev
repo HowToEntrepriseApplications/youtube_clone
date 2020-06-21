@@ -1,0 +1,8 @@
+FROM node:14.4-buster-slim
+
+WORKDIR /spa
+COPY package-lock.json /spa/
+RUN npm install --dev
+
+COPY . /spa/
+CMD ["npm", "run", "dev"]
