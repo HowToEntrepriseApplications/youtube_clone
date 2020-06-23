@@ -7,36 +7,45 @@ services:
     ports:
       - 80:80
 
-  webapp:
+  api:
     build:
-      context: webapp
-      dockerfile: docker/Dockerfile-dev
-    container_name: webapp.boringart
+      context: api
+      dockerfile: Dockerfile-dev
+    container_name: api.boringart
     restart: always
     volumes:
-      - "./webapp:/webapp"
+      - "./api:/api"
     environment:
       - S3_ENDPOINT_URL=http://minio.localtest.me
       - S3_AWS_ACCESS_KEY_ID=minio_access_key
       - S3_AWS_SECRET_ACCESS_KEY=minio_secret_key
-      - S3_BUCKET=youtube-clone
+      - S3_BUCKET=videos
 
       - MONGO_URI=mongodb://mongo:27017
-      - MONGO_DATABASE=youtube_clone
+      - MONGO_DATABASE=boringart
 
-      - REDIS_URI=redis://redis:6379/1
+      - API_SCHEME=http
+      - API_HOST=api.localtest.me
+      - API_PORT=80
 
-      - SITE_SCHEME=http
-      - SITE_HOST=youtube-clone.localtest.me
-      - SITE_PORT=80
-
-      - KEYCLOAK_SERVER_URL=http://keycloak.localtest.me
-      - KEYCLOAK_REALM_NAME=youtube_clone
-      - KEYCLOAK_CLIENT_ID=webapp
-      - KEYCLOAK_CLIENT_SECRET=5106d698-2ea4-457b-a99e-8ba1952ae674
+      - SITE_INDEX=http://boringart.localtest.me
     links:
       - "nginx:keycloak.localtest.me"
       - "nginx:minio.localtest.me"
+
+  spa:
+    build:
+      context: spa
+      dockerfile: Dockerfile-dev
+    container_name: spa.boringart
+    volumes:
+      - "./spa:/spa"
+    environment:
+      - API_ENDPOINT=http://api.localtest.me
+      - KEYCLOAK_URL=http://keycloak.localtest.me/auth
+    links:
+      - "nginx:keycloak.localtest.me"
+      - "nginx:api.localtest.me"
 
   minio:
     image: minio/minio
@@ -58,11 +67,6 @@ services:
     restart: always
     ports:
       - 8081:8081
-
-  redis:
-    image: redis
-    container_name: redis.boringart
-    restart: always
 
   mailhog:
     image: mailhog/mailhog

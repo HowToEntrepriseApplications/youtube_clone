@@ -6,8 +6,6 @@
 	<div><h3><a href="/video/{video.id}">{video.title}</a></h3></div>
 {/each}
 
-die
-
 <script context="module">
     export async function preload(page, session) {
         const query = {"query": "query videos {videos{id title}}", "variables": null}

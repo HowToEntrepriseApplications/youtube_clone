@@ -19,6 +19,14 @@ class Config:
     mongo = environ.group(MongoConfig)
 
     @environ.config
+    class Keycloak:
+        server_url = environ.var('http://localhost:8080')
+        realm_name = environ.var('boring_art')
+        client_id = environ.var('api')
+        client_secret = environ.var('5106d698-2ea4-457b-a99e-8ba1952ae674')
+    keycloak = environ.group(Keycloak)
+
+    @environ.config
     class APIConfig:
         scheme = environ.var('http')
         host = environ.var('0.0.0.0')

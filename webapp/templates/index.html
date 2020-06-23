@@ -1,6 +1,0 @@
-{% extends 'base.html' %}
-{% block main %}
-    {% for video in videos %}
-        <div><h3><a href="{{ url('video', id=video['id']) }}">{{ video['name'] }}</a></h3></div>
-    {% endfor %}
-{% endblock %}
