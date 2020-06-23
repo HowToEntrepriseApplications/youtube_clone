@@ -4,7 +4,6 @@
     {/each}
     <input type="file"   name="file" bind:files/> <br />
     <input type="submit" value="submit" disabled={!video_added}/>
-    {video_added}
 </form>
 
 
