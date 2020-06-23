@@ -1,5 +1,7 @@
 # boringart
 
+![boringart logo](https://raw.githubusercontent.com/boringart/boringart/master/stylegide/logo.png)
+
 ## run
 1. install docker https://docs.docker.com/get-docker/
 2. install docker-compose https://docs.docker.com/compose/install/
