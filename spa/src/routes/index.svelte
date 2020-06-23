@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>Youtube clone</title>
+	<title>Boring art</title>
 </svelte:head>
 
 {#each videos as video (video.id)}

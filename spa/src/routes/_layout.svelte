@@ -1,6 +1,6 @@
 <header>
 	<nav>
-		<a href="/">youtube clone</a>
+		<a href="/">Boring art</a>
 		{#if is_authenticated}
 			<a href="/upload">upload video</a>
 		{/if}
