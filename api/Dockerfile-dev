@@ -5,7 +5,7 @@ ENV LC_ALL C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt update && apt install file -y
+RUN apt update && apt install file ffmpeg -y
 
 RUN pip install --upgrade pip==20.1.1 && pip install pipenv==2020.6.2
 

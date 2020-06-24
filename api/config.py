@@ -9,13 +9,13 @@ class Config:
         endpoint_url = environ.var('http://localhost:9000')
         aws_access_key_id = environ.var('minio_access_key')
         aws_secret_access_key = environ.var('minio_secret_key')
-        bucket = environ.var('videos')
+        bucket = environ.var('boringart')
     s3 = environ.group(S3Config)
 
     @environ.config
     class MongoConfig:
         uri = environ.var('mongodb://localhost:27017')
-        database = environ.var('boringart')
+        database = environ.var('boring_art')
     mongo = environ.group(MongoConfig)
 
     @environ.config

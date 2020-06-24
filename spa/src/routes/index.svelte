@@ -3,12 +3,12 @@
 </svelte:head>
 
 {#each videos as video (video.id)}
-	<div><h3><a href="/video/{video.id}">{video.title}</a></h3></div>
+	<div><h3><a href="/video/{video.id}"><img src="{video.previewUrl}" alt="video preview">{video.title}</a></h3></div>
 {/each}
 
 <script context="module">
     export async function preload(page, session) {
-        const query = {"query": "query videos {videos{id title}}", "variables": null}
+        const query = {"query": "query videos {videos{id title previewUrl}}", "variables": null}
         const res = await this.fetch(process.env.API_ENDPOINT + '/graphql', {
             method: 'POST',
             headers: {

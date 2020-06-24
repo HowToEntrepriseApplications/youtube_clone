@@ -1,1 +1,3 @@
-VIDEO_COLLECTION = 'videos'
+VIDEO_MONGO_COLLECTION = 'videos'
+VIDEO_S3_FOLDER = 'videos'
+PREVIEW_S3_FOLDER = 'preview'

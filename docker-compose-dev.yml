@@ -19,10 +19,8 @@ services:
       - S3_ENDPOINT_URL=http://minio.localtest.me
       - S3_AWS_ACCESS_KEY_ID=minio_access_key
       - S3_AWS_SECRET_ACCESS_KEY=minio_secret_key
-      - S3_BUCKET=videos
 
       - MONGO_URI=mongodb://mongo:27017
-      - MONGO_DATABASE=boringart
 
       - API_SCHEME=http
       - API_HOST=api.localtest.me
