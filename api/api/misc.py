@@ -29,6 +29,7 @@ async def process_file(app, video_id):
         await app['s3'].download_fileobj(s3_config.bucket, f'{VIDEO_S3_FOLDER}/{video_id}', video_file)
         video_file.flush()
 
+        # TODO: Добавить нормальную обработку ошибок
         proc = await asyncio.create_subprocess_shell(
             f'file --mime-type -b {video_file.name}',
             stdout=asyncio.subprocess.PIPE
@@ -43,6 +44,7 @@ async def process_file(app, video_id):
         )
 
         with NamedTemporaryFile() as video_preview_file:
+            # TODO: Добавить нормальную обработку ошибок. файл в stdout
             cmd = f'ffmpeg -i "{video_file.name}" -vframes 1 -c:v png -f image2pipe - >  {video_preview_file.name}'
             proc = await asyncio.create_subprocess_shell(
                 cmd
