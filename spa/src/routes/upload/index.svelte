@@ -8,6 +8,8 @@
 
 
 <script>
+    import { jwt } from '../../store.js';
+
     let video_added = false;
     let presigned_url = undefined;
     let form_fields = {};
@@ -25,6 +27,7 @@
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ` + $jwt,
             },
             body: JSON.stringify(query)
         })

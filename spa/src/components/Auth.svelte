@@ -8,8 +8,11 @@
 
 <script>
 	import { onMount } from 'svelte';
+	import { jwt } from '../store.js';
 
 	export let is_authenticated = false;
+	export let token = undefined;
+	export let refreshToken = undefined;
 	let login = () => {};
 	let logout = () => {};
 
@@ -22,13 +25,18 @@
             clientId: process.env.KEYCLOAK_CLIENT_ID,
         });
 
+        let onAuth = () => {
+            is_authenticated = true;
+            jwt.set(keycloak.token)
+        }
+
         keycloak.init({
             onLoad: 'check-sso',
             silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
-        }).then(authenticated => { is_authenticated = authenticated })
+        }).then(authenticated => { if (authenticated) onAuth() })
 
         login = () => {
-            keycloak.init({onLoad: 'login-required'}).then(authenticated => { is_authenticated = authenticated })
+            keycloak.init({onLoad: 'login-required'}).then(authenticated => { if (authenticated) onAuth() })
         }
 
         logout = () => {
