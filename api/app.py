@@ -8,7 +8,7 @@ from aiohttp.web import Application
 from aiohttp_graphql import GraphQLView
 from graphql.execution.executors.asyncio import AsyncioExecutor
 
-from cleanup_ctx import mongo_ctx, s3_ctx
+from cleanup_ctx import mongo_ctx, s3_ctx, keycloak_ctx
 from config import Config
 from api.graphql_schema import schema
 from api.misc import upload_callback
@@ -23,7 +23,7 @@ def get_app(extra_argv=None) -> Application:
     app['config'] = config
     aiojobs.aiohttp.setup(app, limit=1)
 
-    app.cleanup_ctx.extend((s3_ctx, mongo_ctx))
+    app.cleanup_ctx.extend((s3_ctx, mongo_ctx, keycloak_ctx))
 
     cors = aiohttp_cors.setup(app)
     resource = cors.add(app.router.add_resource("/graphql"), {

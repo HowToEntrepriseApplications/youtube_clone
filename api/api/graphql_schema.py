@@ -1,3 +1,4 @@
+from aiohttp_security import check_authorized
 from bson import ObjectId
 from graphene import ObjectType, String, Schema, ID, Field, List, JSONString
 
@@ -56,9 +57,11 @@ class Mutations(ObjectType):
 
     @staticmethod
     async def resolve_generate_upload_data(root, info, name):
-        # TODO: authorize required
+        request = info.context['request']
 
-        app = info.context['request'].app
+        await check_authorized(request)
+
+        app = request.app
         api_config: Config.APIConfig = app['config'].api
         s3_config: Config.S3Config = app['config'].s3
 

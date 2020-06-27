@@ -23,7 +23,7 @@ class Config:
         server_url = environ.var('http://localhost:8080')
         realm_name = environ.var('boring_art')
         client_id = environ.var('api')
-        client_secret = environ.var('5106d698-2ea4-457b-a99e-8ba1952ae674')
+        client_secret = environ.var()
     keycloak = environ.group(Keycloak)
 
     @environ.config

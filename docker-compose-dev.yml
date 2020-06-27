@@ -22,6 +22,9 @@ services:
 
       - MONGO_URI=mongodb://mongo:27017
 
+      - KEYCLOAK_SERVER_URL=http://keycloak.localtest.me/auth
+      - KEYCLOAK_CLIENT_SECRET=657e28c5-148d-4ac1-9f07-ba7532b09393
+
       - API_SCHEME=http
       - API_HOST=api.localtest.me
       - API_PORT=80
