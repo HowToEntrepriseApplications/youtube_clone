@@ -15,13 +15,13 @@ class Config:
     @environ.config
     class MongoConfig:
         uri = environ.var('mongodb://localhost:27017')
-        database = environ.var('boring_art')
+        database = environ.var('boringart')
     mongo = environ.group(MongoConfig)
 
     @environ.config
     class Keycloak:
         server_url = environ.var('http://localhost:8080')
-        realm_name = environ.var('boring_art')
+        realm_name = environ.var('boringart')
         client_id = environ.var('api')
         client_secret = environ.var()
     keycloak = environ.group(Keycloak)
