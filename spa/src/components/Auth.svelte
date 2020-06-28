@@ -1,8 +1,8 @@
 <auth>
     {#if is_authenticated}
-        <button on:click={logout}>logout</button>
+        <button type="button" class="btn btn-link" on:click={logout}>logout</button>
     {:else}
-        <button on:click={login}>login</button>
+        <button type="button" class="btn btn-link" on:click={login}>login</button>
     {/if}
 </auth>
 

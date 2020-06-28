@@ -2,8 +2,15 @@
     {#each Object.entries(form_fields) as [name, value] (name) }
         <input type="hidden" name="{ name }" value="{ value }" />
     {/each}
-    <input type="file"   name="file" bind:files/> <br />
-    <input type="submit" value="submit" disabled={!video_added}/>
+    <div class="input-group">
+      <div class="custom-file">
+        <input type="file" name="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" bind:files>
+        <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+      </div>
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" disabled={!video_added}>Upload</button>
+      </div>
+    </div>
 </form>
 
 

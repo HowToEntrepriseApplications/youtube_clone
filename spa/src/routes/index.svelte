@@ -3,7 +3,18 @@
 </svelte:head>
 
 {#each videos as video (video.id)}
-	<div><h3><a href="/video/{video.id}"><img src="{video.previewUrl}" alt="video preview">{video.title}</a></h3></div>
+	<div class="card h-100">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="{video.previewUrl}" alt="video preview" class="card-img">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <a href="/video/{video.id}" class="card-title">{video.title}</a>
+              </div>
+            </div>
+        </div>
+    </div>
 {/each}
 
 <script context="module">
