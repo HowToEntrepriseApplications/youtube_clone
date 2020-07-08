@@ -26,7 +26,7 @@ class Video(ObjectType):
         app = info.context['request'].app
         return await app['s3'].generate_presigned_url(
             'get_object',
-            Params={'Bucket': app['config'].s3.bucket, 'Key': f'{PREVIEW_S3_FOLDER}/{root.id}'},
+            Params={'Bucket': app['config'].s3.bucket, 'Key': f'{PREVIEW_S3_FOLDER}/480x270/{root.id}'},
         )
 
 

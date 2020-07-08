@@ -45,14 +45,21 @@ async def process_file(app, video_id):
 
         with NamedTemporaryFile() as video_preview_file:
             # TODO: Добавить нормальную обработку ошибок. файл в stdout
-            cmd = f'ffmpeg -i "{video_file.name}" -vframes 1 -c:v png -f image2pipe - >  {video_preview_file.name}'
+            cmd = f'ffmpeg -i "{video_file.name}" ' \
+                  f'-vf "scale=480:270:force_original_aspect_ratio=decrease,pad=480:270:(ow-iw)/2:(oh-ih)/2" ' \
+                  f'-vframes 1 -c:v png ' \
+                  f'-f image2pipe - >  {video_preview_file.name}'
             proc = await asyncio.create_subprocess_shell(
                 cmd
             )
             await proc.wait()
             video_preview_file.flush()
 
-            await app['s3'].upload_fileobj(video_preview_file, s3_config.bucket, f'{PREVIEW_S3_FOLDER}/{video_id}')
+            await app['s3'].upload_fileobj(
+                video_preview_file,
+                s3_config.bucket,
+                f'{PREVIEW_S3_FOLDER}/480x270/{video_id}'
+            )
 
             await app['db'][VIDEO_MONGO_COLLECTION].update_one(
                 {'_id': ObjectId(video_id)},
