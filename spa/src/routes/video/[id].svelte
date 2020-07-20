@@ -1,11 +1,13 @@
-<h2>{video.title}</h2>
-<video controls>
-    <source src="{video.contentUrl}" type="{video.mimeType}">
-</video>
+<div class="embed-responsive embed-responsive-16by9">
+    <video controls>
+        <source class="embed-responsive-item" src="{video.contentUrl}" type="{video.mimeType}">
+    </video>
+</div>
+<h2 class="row">{video.title}</h2>
 
 <script context="module">
-	export async function preload(page, session) {
-		const { id } = page.params;
+    export async function preload(page, session) {
+        const {id} = page.params;
 
         const query = {
             "query": "query getVideoById($videoId: ID){video: getVideoById(id: $videoId){id title contentUrl mimeType}}",
@@ -21,12 +23,12 @@
         })
         const data = await res.json();
 
-        if (data.data.video === null){
+        if (data.data.video === null) {
             this.error(404, 'Video not found ¯\\_(ツ)_/¯')
         }
 
-		return { video: data.data.video };
-	}
+        return {video: data.data.video};
+    }
 </script>
 
 <script>
