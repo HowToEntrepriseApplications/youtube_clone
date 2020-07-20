@@ -4,23 +4,29 @@
     {/each}
     <div class="input-group">
       <div class="custom-file">
-        <input type="file" name="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" bind:files>
-        <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+        <input type="file" name="file" class="custom-file-input" id="customFile" bind:files>
+        <label class="custom-file-label" for="customFile">Choose file</label>
       </div>
       <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" disabled={!video_added}>Upload</button>
+        <button class="btn btn-outline-secondary" type="submit" disabled={!video_added}>Upload</button>
       </div>
     </div>
 </form>
 
 
 <script>
+    import { onMount } from 'svelte';
     import { jwt } from '../../store.js';
 
     let video_added = false;
     let presigned_url = undefined;
     let form_fields = {};
     let files;
+
+    onMount(async () => {
+        const bsCustomFileInput = (await import('bs-custom-file-input')).default
+        bsCustomFileInput.init()
+    })
 
     $: if (files){
         let file = files[0]
